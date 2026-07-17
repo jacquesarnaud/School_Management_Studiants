@@ -1,0 +1,43 @@
+# Environnements virtuels
+venv/
+.env/
+.venv/
+env/
+
+# Cache Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Bases de données SQLite
+*.db
+*.sqlite3
+
+# Journaux
+*.log
+
+# Fichiers de configuration locaux
+.env.local
+.env.*
+
+# Fichiers PyCharm
+.idea/
+
+# VS Code
+.vscode/
+
+# Fichiers temporaires
+*.tmp
+*.bak
+
+# Distribution
+build/
+dist/
+*.spec
+
+# Exécutables
+*.exe
+
+# Système
+.DS_Store
+Thumbs.db
