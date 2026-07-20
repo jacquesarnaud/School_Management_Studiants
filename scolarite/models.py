@@ -27,7 +27,7 @@ class Etudiant(models.Model):
 
     def __str__(self):
         return f"{self.matricule} — {self.nom} {self.prenom}"
-
+ 
 
 class Professeur(models.Model):
     nom       = models.CharField(max_length=100)
