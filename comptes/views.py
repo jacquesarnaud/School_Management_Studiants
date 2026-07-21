@@ -1,9 +1,7 @@
-from django.views.generic import FormView,ListView,CreateView,FormView
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect
 from .models import *
 from django.contrib.auth.views import LoginView,LogoutView
-
 from .forms import ConnexionForms
 
 class ConnexionView(LoginView):
