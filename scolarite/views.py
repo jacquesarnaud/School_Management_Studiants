@@ -1,12 +1,43 @@
 # scolarite/views.py
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+<<<<<<< HEAD
 from scolarite.models import Etudiant, Professeur, Classe, Matiere
 from notes.models import Note, Absence
 from .generateur import generer_matricule, generer_email, generer_mot_de_passe
 from comptes.models import Utilisateur
 
 
+=======
+from django.contrib.auth import login, logout, authenticate
+from scolarite.models import Etudiant, Professeur, Classe, Matiere
+from notes.models import Note, Absence
+from utils.generateur import generer_matricule, generer_email, generer_mot_de_passe
+from comptes.models import Utilisateur
+
+
+def vue_connexion(request):
+    if request.method == 'POST':
+        email    = request.POST['email']
+        password = request.POST['password']
+        user     = authenticate(request, username=email, password=password)
+        if user:
+            login(request, user)
+            return redirect('dashboard')
+        return render(request, 'connexion.html', {'erreur': 'Identifiants incorrects'})
+    return render(request, 'connexion.html')
+
+
+@login_required
+def dashboard(request):
+    role = request.user.role
+    if role == 'admin':
+        return redirect('admin_dashboard')
+    elif role == 'professeur':
+        return redirect('prof_dashboard')
+    elif role == 'etudiant':
+        return redirect('etu_dashboard')
+>>>>>>> a002c6f (generation des email et pass)
 
 
 # ── Admin ────────────────────────────────────────────────────────────────────
@@ -34,7 +65,11 @@ def admin_dashboard(request):
 
 
 @role_requis('admin')
+<<<<<<< HEAD
 def ajouter_professeur(request):
+=======
+def ajouter_etudiant(request):
+>>>>>>> a002c6f (generation des email et pass)
     if request.method == 'POST':
         nom       = request.POST['nom']
         prenom    = request.POST['prenom']
@@ -50,8 +85,13 @@ def ajouter_professeur(request):
             username   = email,
             email      = email,
             password   = mot_de_passe,
+<<<<<<< HEAD
             first_name = nom,
             last_name  = prenom,
+=======
+            first_name = prenom,
+            last_name  = nom,
+>>>>>>> a002c6f (generation des email et pass)
             role       = 'etudiant'
         )
         # Créer le profil étudiant
@@ -72,6 +112,7 @@ def ajouter_professeur(request):
     classes = Classe.objects.all()
     return render(request, 'admin/ajouter_etudiant.html', {'classes': classes})
 
+<<<<<<< HEAD
 @role_requis('admin')
 def ajouter_etudiant(request):
     if request.method == 'POST':
@@ -109,6 +150,8 @@ def ajouter_etudiant(request):
 
     classes = Classe.objects.all()
     return render(request, 'admin/ajouter_professeur.html', {'classes': classes})
+=======
+>>>>>>> a002c6f (generation des email et pass)
 
 # ── Professeur ───────────────────────────────────────────────────────────────
 
