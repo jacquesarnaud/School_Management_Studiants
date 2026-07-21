@@ -1,37 +1,31 @@
-from django.views.generic import FormView,ListView
-from django.contrib.auth import authenticate, login
+from django.views.generic import FormView,ListView,CreateView,FormView
 from django.urls import reverse_lazy
+from django.shortcuts import render, redirect
+from .models import *
+from django.contrib.auth.views import LoginView,LogoutView
 
-from .formulaire_compt import ConnexionForm
+from .forms import ConnexionForms
 
+class ConnexionView(LoginView):
 
-class ConnexionView(FormView):
-    template_name = 'comptes/connexion.html'
-    form_class = ConnexionForm
-    success_url = reverse_lazy('home')
+    template_name = "comptes/connexion.html"
+    authentication_form = ConnexionForms
+    redirect_authenticated_user = True
 
-    def form_valid(self, form):
+    def get_success_url(self):
 
-        print("FORMULAIRE VALIDE")
+        user = self.request.user
 
-        email = form.cleaned_data['email']
-        password = form.cleaned_data['password']
+        if user.role == "admin":
+            return reverse_lazy("admin_dashboard")
 
-        user = authenticate(
-            self.request,
-            username=email,
-            password=password
-        )
+        elif user.role == "professeur":
+            return reverse_lazy("prof_dashboard")
 
-        print(user)
+        elif user.role == "etudiant":
+            return reverse_lazy("etu_dashboard")
 
-        if user:
-            login(self.request, user)
-            return super().form_valid(form)
+        return reverse_lazy("login")
 
-        form.add_error(None, "Identifiants incorrects")
-        return self.form_invalid(form)
-
-class Home(ListView):
-    template_name = "comptes/home.html"
-
+def acceuille(request):
+    return render(request , 'comptes/accueil.html')

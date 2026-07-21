@@ -1,7 +1,11 @@
 from django.urls import path
+from django.contrib.auth.views import LogoutView
+
 from .views import *
 
 urlpatterns = [
-    path('se-connecter/',ConnexionView.as_view(),name='vue_connexion'),
-    path("home/", Home.as_view(), name="home")
+    path("connexion/", ConnexionView.as_view(), name="connexion"),
+    path("", acceuille, name="acceuille"),
+    path("deconnexion/", LogoutView.as_view(next_page="connexion"), name="logout"),
+
 ]

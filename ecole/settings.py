@@ -119,3 +119,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 AUTH_USER_MODEL = 'comptes.Utilisateur'
+
+LOGIN_REDIRECT_URL = "acceuille"
+LOGIN_URL = "login"
+LOGOUT_REDIRECT_URL = "login"

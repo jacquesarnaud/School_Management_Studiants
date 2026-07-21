@@ -20,7 +20,7 @@ class Etudiant(models.Model):
     matricule = models.CharField(max_length=30, unique=True)
     nom       = models.CharField(max_length=100)
     prenom    = models.CharField(max_length=100)
-    age       = models.IntegerField()
+    age       = models.IntegerField(default=0)
     classe    = models.ForeignKey(Classe,     on_delete=models.SET_NULL, null=True)
     id_user   = models.OneToOneField(Utilisateur, on_delete=models.CASCADE,
                                      related_name='etudiant', null=True)
@@ -32,6 +32,7 @@ class Etudiant(models.Model):
 class Professeur(models.Model):
     nom       = models.CharField(max_length=100)
     prenom    = models.CharField(max_length=100)
+    age       = models.IntegerField(default=0)
     matiere   = models.ForeignKey(Matiere, on_delete=models.SET_NULL, null=True)
     classe    = models.ForeignKey(Classe,  on_delete=models.SET_NULL, null=True)
     id_user   = models.OneToOneField(Utilisateur, on_delete=models.CASCADE,
