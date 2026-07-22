@@ -22,7 +22,11 @@ class ConnexionView(LoginView):
 
         elif user.role == "etudiant":
             return reverse_lazy("etu_dashboard")
-
+            user = authenticate(
+                self.request,
+                email=email,
+                password=password
+            )
         return reverse_lazy("login")
 
 def acceuille(request):
