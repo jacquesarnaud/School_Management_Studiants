@@ -10,13 +10,14 @@
     <div class="cards">
 
         <div class="card">
-            <h2>🏫 Classes</h2>
-            <p> </p>
+            <h2>🏫 Ma Classes</h2>
+            <p> {{ classe }} </p>
         </div>
 
         <div class="card">
-            <h2>📚 Matières</h2>
-            <p> {{ nb_matieres }} </p>
+            <h2>📚 Mes Matières</h2>
+            {% for i in matieres  %}
+            <p> {{ i.nom_matiere }} </p>
         </div>
 
     </div>
@@ -24,10 +25,9 @@
     <div class="section">
         <h2>Actions rapides</h2>
 
-        <a href="" class="btn">Ajouter un étudiant</a>
-        <a href="" class="btn">Ajouter un professeur</a>
-        <a href="" class="btn">Créer une classe</a>
-        <a href="" class="btn">Ajouter une matiere</a>
+        <a href="" class="btn">voir mes notes</a>
+        <a href="" class="btn">voir mes absences</a>
+
     </div>
 
 </div>

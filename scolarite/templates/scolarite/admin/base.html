@@ -16,13 +16,15 @@
 
         <ul>
             <li><a href="">Accueil</a></li>
-            <li><a href="">Gestion des utilisateurs</a></li>
-            <li><a href="">Gestion des étudiants</a></li>
+            <li><a href="users_liste">Gestion des utilisateurs</a></li>
+            <li><a href="ajouter_etudiant">Gestion des étudiants</a></li>
             <li><a href="">Gestion des professeurs</a></li>
             <li><a href="">Statistiques</a></li>
             
         </ul>
-        <button>Se deconnecter</button>            
+        <form action="{% url 'Deconnexion' %}">
+            <button >Se deconnecter</button>            
+        </form>
 
     </nav>
 

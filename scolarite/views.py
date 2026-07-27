@@ -1,5 +1,5 @@
 # scolarite/views.py
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
 from scolarite.models import Etudiant, Professeur, Classe, Matiere
@@ -38,51 +38,67 @@ def afficher_utilisateur(request):
 
     return render(request, "scolarite/admin/liste_user.html", {"utilisateurs": utilisateurs})
 
+def identifiant(request):   
+    render (request,'scolarite/admin/identidiants.html',)
 
 @role_requis('admin')
 def ajouter_etudiant(request):
-    if request.method == 'POST':
-        nom       = request.POST['nom']
-        prenom    = request.POST['prenom']
-        age       = request.POST['age']
-        classe_id = request.POST['classe_id']
-
-        matricule    = generer_matricule(nom, prenom)
-        email        = generer_email(nom, prenom, 'etudiant')
-        mot_de_passe = generer_mot_de_passe()
-
-        user = Utilisateur.objects.create_user(
-            username   = email,
-            email      = email,
-            password   = mot_de_passe,
-            first_name = nom,
-            last_name  = prenom,
-            role       = 'etudiant'
-        )
-        Etudiant.objects.create(
-            matricule = matricule,
-            nom       = nom,
-            prenom    = prenom,
-            age       = age,
-            classe_id = classe_id,
-            id_user   = user
-        )
-        if user:
-            redirect(request, 'scolarite/admin/identifiants.html', {
-                        'prenom' : prenom,
-                        'nom':nom,
-                        'matricule':    matricule,
-                        'email':        email,
-                        'mot_de_passe': mot_de_passe
-                    })
-            messages.success(request," l'etudiant {nom} {prenom} a ete enregistre ")
-        messages.success(request," l'etudiant {nom} {prenom} n'a pas ete enregistre ")
-
-        
     classes = Classe.objects.all()
 
-    return render(request, 'admin/ajouter_etudiant.html', {'classes': classes})
+    if request.method == "POST":
+        nom = request.POST["nom"]
+        prenom = request.POST["prenom"]
+        age = int(request.POST["age"])
+        classe_id = request.POST["classe_id"]
+        classe = get_object_or_404(Classe, id=classe_id)
 
+        matricule = generer_matricule(nom, prenom)
+        email = generer_email(nom, prenom, "etudiant")
+        mot_de_passe = generer_mot_de_passe()
+
+        if len(nom) >= 3 and len(prenom) >= 3 and 5 < age < 70:
+
+            user = Utilisateur.objects.create_user(
+                username=email,
+                email=email,
+                password=mot_de_passe,
+                first_name=nom,
+                last_name=prenom,
+                role="etudiant",
+            )
+
+            Etudiant.objects.create(
+                matricule=matricule,
+                nom=nom,
+                prenom=prenom,
+                age=age,
+                classe=classe,
+                id_user=user,
+            )
+
+            messages.success(
+                request,
+                f"L'étudiant {nom} {prenom} a été enregistré."
+            )
+            return render(request, "scolarite/admin/identifiants.html", {
+                                "nom": nom,
+                                "prenom": prenom,
+                                "email": email,
+                                "mot_de_passe": mot_de_passe,
+                                "matricule": matricule,
+                                "role": "etudiant",
+                            })
+
+        messages.error(
+            request,
+            "Le nom et le prénom doivent contenir au moins 3 caractères et l'âge doit être compris entre 6 et 69 ans."
+        )
+
+    return render(
+        request,
+        "scolarite/admin/ajouter_etudiant.html",
+        {"classes": classes},
+    )
 @role_requis('admin')
 def ajouter_professeur(request):
     if request.method == 'POST':
@@ -94,29 +110,29 @@ def ajouter_professeur(request):
 
         email        = generer_email(nom, prenom, 'professeur')
         mot_de_passe = generer_mot_de_passe()
-
-        # Créer le compte utilisateur
-        user = Professeur.objects.create_user(
-            username   = email,
-            email      = email,
-            password   = mot_de_passe,
-            first_name = nom,
-            last_name  = prenom,
-            role       = 'professeur'
-        )
-        # Créer le profil étudiant
-        Professeur.objects.create(
-            nom       = nom,
-            prenom    = prenom,
-            age       =age,
-            matiere   = classe_id,
-            classe    = matiere_id,
-            id_user   = user
-        )
-        redirect(request, 'scolarite/admin/identifiants.html', {
-            'email':        email,
-            'mot_de_passe': mot_de_passe
-        })
+        if len(nom) == 3 and len(prenom) == 3 and 5 < age < 70:
+            # Créer le compte utilisateur
+            user = Professeur.objects.create_user(
+                username   = email,
+                email      = email,
+                password   = mot_de_passe,
+                first_name = nom,
+                last_name  = prenom,
+                role       = 'professeur'
+            )
+            # Créer le profil étudiant
+            Professeur.objects.create(
+                nom       = nom,
+                prenom    = prenom,
+                age       =age,
+                matiere   = classe_id,
+                classe    = matiere_id,
+                id_user   = user
+            )
+            redirect(request, 'scolarite/admin/identifiants.html', {
+                'email':        email,
+                'mot_de_passe': mot_de_passe
+            })
 
     classes = Classe.objects.all()
     return render(request, 'scolarite/admin/ajouter_prof.html', {'classes': classes})
@@ -155,6 +171,12 @@ def ajouter_note(request):
 
 # ── Étudiant ─────────────────────────────────────────────────────────────────
 
+def etudiant_dashboard(request):
+    context = {
+        "classes": Classe.objects.filter(Classe=Classe),
+        "matieres": Matiere.objects.all(),
+    }
+    return render (request,'comptes/etudiant/accueille_etudiant.html', context)
 @role_requis('etudiant')
 def etu_dashboard(request):
     etudiant = request.user.etudiant

@@ -11,7 +11,7 @@ class Utilisateur(AbstractUser):
             ("etudiant", "Étudiant")
         ]
     )
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['email','role']
 
 
     def __str__(self):

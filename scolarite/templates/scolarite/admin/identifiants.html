@@ -1,22 +1,36 @@
 {% extends "scolarite/admin/base.html" %}
 
+{% block content %}
 
- {% block content %}
-    {% for message in messages  %}
-      {{message}}
-    {% endfor %}
-    {% if role == 'etudiant'  %}
-        <h1> les identifiants de l'eleve {{ nom }} {{ prenom }}</h1>
-    {% else %}
-        <h1> les identifiants du professeur {{ nom }} {{ prenom }}</h1>
-    {% endif %}
+{% for message in messages %}
+    <p>{{ message }}</p>
+{% endfor %}
 
+{% if role == 'etudiant' %}
+    <h1>Identifiants de l'étudiant {{ nom }} {{ prenom }}</h1>
+{% else %}
+    <h1>Identifiants du professeur {{ nom }} {{ prenom }}</h1>
+{% endif %}
+
+<table border="1">
     <tr>
+        <th>Matricule</th>
+        <td>{{ matricule }}</td>
+    </tr>
+    <tr>
+        <th>Email</th>
         <td>{{ email }}</td>
+    </tr>
+    <tr>
+        <th>Mot de passe</th>
         <td>{{ mot_de_passe }}</td>
     </tr>
-    {% endfor %}
+</table>
 
-    <button href="">ajouter un autre etudiant</button>
-    
-{% endblock content %}
+<br>
+
+<a href="{% url 'ajouter_etudiant' %}" class="btn btn-primary">
+    Ajouter un autre étudiant
+</a>
+
+{% endblock %}
