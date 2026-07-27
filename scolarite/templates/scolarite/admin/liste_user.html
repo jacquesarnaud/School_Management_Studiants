@@ -1,0 +1,14 @@
+{% extends "scolarite/admin/base.html" %}
+
+
+ {% block content %}
+
+    {% for utilisateur in utilisateurs %}
+    <tr>
+        <td>{{ utilisateur.username }}</td>
+        <td>{{ utilisateur.email }}</td>
+        <td>{{ utilisateur.role }}</td>
+    </tr>
+    {% endfor %}
+    
+{% endblock content %}

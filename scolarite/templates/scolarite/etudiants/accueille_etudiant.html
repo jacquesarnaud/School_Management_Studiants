@@ -1,0 +1,36 @@
+{% extends "scolarite/etudiants/base.html" %}
+
+{% block content %}
+
+<div class="dashboard">
+
+    <h1>Bienvenue, cher etudiant  👋</h1>
+    <p>Tableau de bord de l'etudiants.</p>
+
+    <div class="cards">
+
+        <div class="card">
+            <h2>🏫 Classes</h2>
+            <p> </p>
+        </div>
+
+        <div class="card">
+            <h2>📚 Matières</h2>
+            <p> {{ nb_matieres }} </p>
+        </div>
+
+    </div>
+
+    <div class="section">
+        <h2>Actions rapides</h2>
+
+        <a href="" class="btn">Ajouter un étudiant</a>
+        <a href="" class="btn">Ajouter un professeur</a>
+        <a href="" class="btn">Créer une classe</a>
+        <a href="" class="btn">Ajouter une matiere</a>
+    </div>
+
+</div>
+
+    
+{% endblock content %}

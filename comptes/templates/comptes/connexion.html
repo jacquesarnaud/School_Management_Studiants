@@ -1,10 +1,15 @@
-{% extends "base.html" %}
+{% extends "comptes/base.html" %}
 
 {% block content %}
 
-<div>
-    <form action="">
-        
+<div class="hero_co">
+    <form class="hero_cont" method="post">
+
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button class =" btn_co " type="submit">Se connecter</button>
+
     </form>
 </div>
 

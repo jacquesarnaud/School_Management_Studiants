@@ -1,0 +1,37 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Etudiants Dashboard</title>
+    <link rel="stylesheet" href="{% static 'scolarite/etudiants/styles.css' %}">
+</head>
+<body>
+
+<div class="container">
+
+    <nav class="nav_bar">
+        <h2>Etudiant</h2>
+
+        <ul>
+            <li><a href="">Accueil</a></li>
+            <li><a href="">Mes notes</a></li>
+            <li><a href="">voir mes heures d'absence</a></li>
+                       
+        </ul>
+        <button>Se deconnecter</button> 
+    </nav>
+
+    <main class="content">
+        {% block content %}
+
+
+
+        {% endblock content %}
+    </main>
+
+</div>
+
+</body>
+</html>

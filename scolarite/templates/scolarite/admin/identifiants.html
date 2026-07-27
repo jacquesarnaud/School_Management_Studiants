@@ -1,0 +1,22 @@
+{% extends "scolarite/admin/base.html" %}
+
+
+ {% block content %}
+    {% for message in messages  %}
+      {{message}}
+    {% endfor %}
+    {% if role == 'etudiant'  %}
+        <h1> les identifiants de l'eleve {{ nom }} {{ prenom }}</h1>
+    {% else %}
+        <h1> les identifiants du professeur {{ nom }} {{ prenom }}</h1>
+    {% endif %}
+
+    <tr>
+        <td>{{ email }}</td>
+        <td>{{ mot_de_passe }}</td>
+    </tr>
+    {% endfor %}
+
+    <button href="">ajouter un autre etudiant</button>
+    
+{% endblock content %}

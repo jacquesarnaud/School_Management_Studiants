@@ -1,0 +1,46 @@
+{% extends "scolarite/admin/base.html" %}
+
+{% block content %}
+
+<div class="dashboard">
+
+    <h1>Bienvenue,  👋</h1>
+    <p>Tableau de bord de l'administration.</p>
+
+    <div class="cards">
+
+        <div class="card">
+            <h2>👨‍🎓 Étudiants</h2>
+            <p> {{ nb_etudiants }} </p>
+        </div>
+
+        <div class="card">
+            <h2>👨‍🏫 Professeurs</h2>
+            <p> {{ nb_professeurs }} </p>
+        </div>
+
+        <div class="card">
+            <h2>🏫 Classes</h2>
+            <p> {{ nb_classes }} </p>
+        </div>
+
+        <div class="card">
+            <h2>📚 Matières</h2>
+            <p> {{ nb_matieres }} </p>
+        </div>
+
+    </div>
+
+    <div class="section">
+        <h2>Actions rapides</h2>
+
+        <a href="" class="btn">Ajouter un étudiant</a>
+        <a href="" class="btn">Ajouter un professeur</a>
+        <a href="" class="btn">Créer une classe</a>
+        <a href="" class="btn">Ajouter une matiere</a>
+    </div>
+
+</div>
+
+    
+{% endblock content %}

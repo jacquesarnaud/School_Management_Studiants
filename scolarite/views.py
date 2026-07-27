@@ -6,29 +6,7 @@ from scolarite.models import Etudiant, Professeur, Classe, Matiere
 from notes.models import Note, Absence
 from .generateur import generer_matricule, generer_email, generer_mot_de_passe
 from comptes.models import Utilisateur
-
-
-def vue_connexion(request):
-    if request.method == 'POST':
-        email    = request.POST['email']
-        password = request.POST['password']
-        user     = authenticate(request, username=email, password=password)
-        if user:
-            login(request, user)
-            return redirect('dashboard')
-        return render(request, 'connexion.html', {'erreur': 'Identifiants incorrects'})
-    return render(request, 'connexion.html')
-
-
-@login_required
-def dashboard(request):
-    role = request.user.role
-    if role == 'admin':
-        return redirect('admin_dashboard')
-    elif role == 'professeur':
-        return redirect('prof_dashboard')
-    elif role == 'etudiant':
-        return redirect('etu_dashboard')
+from django.contrib import messages
 
 
 # ── Admin ────────────────────────────────────────────────────────────────────
@@ -44,15 +22,21 @@ def role_requis(role):
         return wrapper
     return decorateur
 
-
-@role_requis('admin')
 def admin_dashboard(request):
-    etudiants   = Etudiant.objects.select_related('classe').all()
-    professeurs = Professeur.objects.select_related('matiere', 'classe').all()
-    return render(request, 'admin/dashboard.html', {
-        'etudiants':   etudiants,
-        'professeurs': professeurs
-    })
+    context = {
+        "nb_utilisateurs": Utilisateur.objects.count(),
+        "nb_etudiants": Etudiant.objects.count(),
+        "nb_professeurs": Professeur.objects.count(),
+        "nb_classes": Classe.objects.count(),
+        "nb_matieres": Matiere.objects.count(),
+    }
+
+    return render(request, "scolarite/admin/accueille_admin.html", context)
+
+def afficher_utilisateur(request):
+    utilisateurs = Utilisateur.objects.all()
+
+    return render(request, "scolarite/admin/liste_user.html", {"utilisateurs": utilisateurs})
 
 
 @role_requis('admin')
@@ -67,7 +51,6 @@ def ajouter_etudiant(request):
         email        = generer_email(nom, prenom, 'etudiant')
         mot_de_passe = generer_mot_de_passe()
 
-        # Créer le compte utilisateur
         user = Utilisateur.objects.create_user(
             username   = email,
             email      = email,
@@ -76,7 +59,6 @@ def ajouter_etudiant(request):
             last_name  = prenom,
             role       = 'etudiant'
         )
-        # Créer le profil étudiant
         Etudiant.objects.create(
             matricule = matricule,
             nom       = nom,
@@ -85,13 +67,20 @@ def ajouter_etudiant(request):
             classe_id = classe_id,
             id_user   = user
         )
-        return render(request, 'admin/identifiants.html', {
-            'matricule':    matricule,
-            'email':        email,
-            'mot_de_passe': mot_de_passe
-        })
+        if user:
+            redirect(request, 'scolarite/admin/identifiants.html', {
+                        'prenom' : prenom,
+                        'nom':nom,
+                        'matricule':    matricule,
+                        'email':        email,
+                        'mot_de_passe': mot_de_passe
+                    })
+            messages.success(request," l'etudiant {nom} {prenom} a ete enregistre ")
+        messages.success(request," l'etudiant {nom} {prenom} n'a pas ete enregistre ")
 
+        
     classes = Classe.objects.all()
+
     return render(request, 'admin/ajouter_etudiant.html', {'classes': classes})
 
 @role_requis('admin')
@@ -124,13 +113,13 @@ def ajouter_professeur(request):
             classe    = matiere_id,
             id_user   = user
         )
-        return render(request, 'admin/identifiants.html', {
+        redirect(request, 'scolarite/admin/identifiants.html', {
             'email':        email,
             'mot_de_passe': mot_de_passe
         })
 
     classes = Classe.objects.all()
-    return render(request, 'admin/ajouter_professeur.html', {'classes': classes})
+    return render(request, 'scolarite/admin/ajouter_prof.html', {'classes': classes})
 
 # ── Professeur ───────────────────────────────────────────────────────────────
 

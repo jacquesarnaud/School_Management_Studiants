@@ -1,13 +1,21 @@
-{% extends "base.html" %}
+{% extends "comptes/base.html" %}
 
 {% block content %}
 
-<h1> Bienvenue sur votre portail scolaire concus pour la gestion du systeme de votre etablissement</h1>
-<form action="{% url '' %}">
-    <button>
-        Se connecter
-    </button>
-</form>
+<div class="hero">
+    <div class="hero-content">
+        <h1>Bienvenue sur votre portail scolaire</h1>
+
+        <p>
+            Gérez facilement les élèves, les enseignants, les classes,
+            les matières, les notes et les absences depuis une seule plateforme.
+        </p>
+
+        <a href="{% url 'connexion' %}" >
+            <button class="btn">Se connecter</button>
+        </a>
+    </div>
+</div>
 
 {% endblock content %}
 
