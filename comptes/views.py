@@ -29,7 +29,7 @@ class Connecter(FormView):
         login(self.request, user)
 
         if user.role == "admin":
-            return redirect("dashbord_admin")
+            return redirect("admin_dashboard")
         elif user.role == "professeur":
             return redirect("")
         elif user.role == "etudiant":

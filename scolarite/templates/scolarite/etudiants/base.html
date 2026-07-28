@@ -9,18 +9,20 @@
 </head>
 <body>
 
-<div class="container">
+<div class="container" >
 
-    <nav class="nav_bar">
+    <nav class="nav_bar" style="flex-direction: row; display: block; ;">
         <h2>Etudiant</h2>
 
         <ul>
-            <li><a href="">Accueil</a></li>
-            <li><a href="">Mes notes</a></li>
-            <li><a href="">voir mes heures d'absence</a></li>
+            <li><a href="{% url 'etudiant_dashboard' %}">Accueil</a></li>
+            <li><a href="{% url 'mes_notes' %}">Mes notes</a></li>
+            <li><a href="{% url 'mes_absences' %}">Mes absences</a></li>
                        
         </ul>
-        <button>Se deconnecter</button> 
+        <form action="{% url 'Deconnexion' %}">
+            <button >Se deconnecter</button>            
+        </form>
     </nav>
 
     <main class="content">

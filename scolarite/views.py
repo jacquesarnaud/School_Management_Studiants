@@ -7,21 +7,25 @@ from notes.models import Note, Absence
 from .generateur import generer_matricule, generer_email, generer_mot_de_passe
 from comptes.models import Utilisateur
 from django.contrib import messages
-
+from functools import wraps
+from django.core.exceptions import PermissionDenied
 
 # ── Admin ────────────────────────────────────────────────────────────────────
 
 def role_requis(role):
-    """Décorateur personnalisé pour vérifier le rôle."""
     def decorateur(vue):
+        @wraps(vue)
         @login_required
         def wrapper(request, *args, **kwargs):
-            if request.user.role != role:
-                return redirect('dashboard')
+            if getattr(request.user, "role", None) != role:
+                raise PermissionDenied("Vous n'avez pas l'autorisation d'accéder à cette page.")
             return vue(request, *args, **kwargs)
+
         return wrapper
+
     return decorateur
 
+@role_requis('admin')
 def admin_dashboard(request):
     context = {
         "nb_utilisateurs": Utilisateur.objects.count(),
@@ -30,16 +34,25 @@ def admin_dashboard(request):
         "nb_classes": Classe.objects.count(),
         "nb_matieres": Matiere.objects.count(),
     }
-
     return render(request, "scolarite/admin/accueille_admin.html", context)
 
+@role_requis('admin')
 def afficher_utilisateur(request):
     utilisateurs = Utilisateur.objects.all()
-
     return render(request, "scolarite/admin/liste_user.html", {"utilisateurs": utilisateurs})
 
+@role_requis('admin')
 def identifiant(request):   
     render (request,'scolarite/admin/identidiants.html',)
+
+def list_etudiant(request):
+    etudiants = Etudiant.objects.all()
+
+    context = {
+        "etudiants": etudiants
+    }
+
+    return render(request, "scolarite/admin/liste_etud_registe.html", context)
 
 @role_requis('admin')
 def ajouter_etudiant(request):
@@ -99,6 +112,7 @@ def ajouter_etudiant(request):
         "scolarite/admin/ajouter_etudiant.html",
         {"classes": classes},
     )
+
 @role_requis('admin')
 def ajouter_professeur(request):
     if request.method == 'POST':
@@ -170,25 +184,63 @@ def ajouter_note(request):
 
 
 # ── Étudiant ─────────────────────────────────────────────────────────────────
-
-def etudiant_dashboard(request):
-    context = {
-        "classes": Classe.objects.filter(Classe=Classe),
-        "matieres": Matiere.objects.all(),
-    }
-    return render (request,'comptes/etudiant/accueille_etudiant.html', context)
 @role_requis('etudiant')
 def etu_dashboard(request):
-    etudiant = request.user.etudiant
-    notes    = Note.objects.filter(etudiant=etudiant).select_related('matiere')
-    absences = Absence.objects.filter(etudiant=etudiant).select_related('matiere')
 
-    moyenne_generale = (
-        sum(n.note for n in notes) / len(notes) if notes else None
+    etudiant = request.user.etudiant
+
+    classe = etudiant.classe
+
+    matieres = Matiere.objects.filter(
+        professeur__classe=classe
+    ).distinct()
+
+    context = {
+        "etudiant": etudiant,
+        "classe": classe,
+        "matieres": matieres,
+    }
+
+    return render(
+        request,
+        "scolarite/etudiants/accueille_etudiant.html",
+        context
     )
-    return render(request, 'etudiant/dashboard.html', {
-        'etudiant':         etudiant,
-        'notes':            notes,
-        'absences':         absences,
-        'moyenne_generale': round(moyenne_generale, 2) if moyenne_generale else None
-    })
+
+@role_requis('etudiant')
+def mes_notes(request):
+
+    etudiant = request.user.etudiant
+
+    notes = Note.objects.filter(
+        etudiant=etudiant
+    ).select_related('matiere')
+
+
+    return render(
+        request,
+        'scolarite/etudiants/notes.html',
+        {
+            'etudiant': etudiant,
+            'notes': notes,
+        }
+    )
+@role_requis('etudiant')
+def mes_absences(request):
+
+    etudiant = request.user.etudiant
+
+
+    absences = Absence.objects.filter(
+        etudiant=etudiant
+    ).select_related('matiere')
+
+
+    return render(
+        request,
+        'scolarite/etudiants/absences.html',
+        {
+            'etudiant': etudiant,
+            'absences': absences,
+        }
+    )

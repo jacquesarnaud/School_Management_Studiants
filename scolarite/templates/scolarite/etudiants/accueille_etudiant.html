@@ -10,14 +10,21 @@
     <div class="cards">
 
         <div class="card">
-            <h2>🏫 Ma Classes</h2>
-            <p> {{ classe }} </p>
+            <h3>Classe : {{ classe.nom_classe }}</h3>
         </div>
 
         <div class="card">
-            <h2>📚 Mes Matières</h2>
-            {% for i in matieres  %}
-            <p> {{ i.nom_matiere }} </p>
+            <h3>Matières</h3>
+
+            <ul>
+                {% for matiere in matieres %}
+                    <li>
+                        {{ matiere.nom_matiere }}
+                    </li>
+                {% empty %}
+                    <li>Aucune matière trouvée</li>
+                {% endfor %}
+            </ul>
         </div>
 
     </div>

@@ -2,13 +2,21 @@
 
 
  {% block content %}
+<table>
+
+<thead>
+<tr>
+    <th>email</th>
+    <th>role</th>
+</tr>
+</thead>
 
     {% for utilisateur in utilisateurs %}
     <tr>
-        <td>{{ utilisateur.username }}</td>
         <td>{{ utilisateur.email }}</td>
         <td>{{ utilisateur.role }}</td>
     </tr>
     {% endfor %}
-    
+<tbody>
+</table>
 {% endblock content %}

@@ -1,0 +1,53 @@
+{% extends "scolarite/etudiants/base.html" %}
+
+{% block content %}
+
+<h2>
+    Mes absences
+</h2>
+
+
+<table>
+
+<thead>
+<tr>
+    <th>Matière</th>
+    <th>Date</th>
+    <th>Motif</th>
+</tr>
+</thead>
+
+
+<tbody>
+
+{% for absence in absences %}
+
+<tr>
+
+<td>
+    {{ absence.matiere.nom_matiere }}
+</td>
+
+
+<td>
+    {{ absence.date }}
+</td>
+
+</tr>
+
+
+{% empty %}
+
+<tr>
+    <td colspan="3">
+        Aucune absence enregistrée
+    </td>
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+{% endblock content %}

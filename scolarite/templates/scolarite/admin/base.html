@@ -5,19 +5,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="{% static 'scolarite/admin/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'scolarite/admin/style.css' %}">
 </head>
 <body>
 
-<div class="container">
+<div styles=" " class="container" >
 
     <nav class="nav_bar">
         <h2>Administration</h2>
 
         <ul>
-            <li><a href="">Accueil</a></li>
-            <li><a href="users_liste">Gestion des utilisateurs</a></li>
-            <li><a href="ajouter_etudiant">Gestion des étudiants</a></li>
+            <li><a href="{% url 'admin_dashboard' %} ">Accueil</a></li>
+            <li><a href="{% url 'users_liste' %}">Gestion des utilisateurs</a></li>
+            <li><a href="{% url 'liste_etu' %}">Gestion des étudiants</a></li>
             <li><a href="">Gestion des professeurs</a></li>
             <li><a href="">Statistiques</a></li>
             
