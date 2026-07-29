@@ -10,6 +10,7 @@ urlpatterns = [
     path('mes_notes',mes_notes,name='mes_notes'),
     path('mes_absences',mes_absences,name='mes_absences'),
     path('liste_etu',list_etudiant,name='liste_etu'),
+    path('etudiant/<int:pk>/supprimer/',suprimer_etudiant,name='suprimer_etudiant'),
 
-    
+
 ]

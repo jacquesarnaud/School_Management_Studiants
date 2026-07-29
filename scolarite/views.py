@@ -113,6 +113,23 @@ def ajouter_etudiant(request):
         {"classes": classes},
     )
 
+def suprimer_etudiant(request , pk):
+    etudiant = get_object_or_404(Etudiant,pk=pk)
+    if request.method == 'POST':
+        etudiant.delete('liste_etu')
+        redirect('liste_etu')
+
+    return render(request, "comptes/etudiant/supprimer.html", {
+        "etudiant": etudiant
+    })
+
+def detail_etudiant(request , pk=id):
+    etudiant = get_object_or_404(Etudiant,pk=pk)
+    return render(request, "comptes/etudiant/detail.html", {
+            "etudiant": etudiant
+        })
+
+
 @role_requis('admin')
 def ajouter_professeur(request):
     if request.method == 'POST':
@@ -134,7 +151,6 @@ def ajouter_professeur(request):
                 last_name  = prenom,
                 role       = 'professeur'
             )
-            # Créer le profil étudiant
             Professeur.objects.create(
                 nom       = nom,
                 prenom    = prenom,

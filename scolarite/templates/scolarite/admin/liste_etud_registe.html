@@ -15,10 +15,10 @@
     {{ etudiant.prenom }}
     {{ etudiant.matricule }}
     {{ etudiant.classe }}
-
-    <button type="button">Détail</button>
-    <button type="button">Modifier</button>
-    <button type="button">Supprimer</button>
+     
+   <a href="">Détail</a>
+   <a href="">Modifier</a>
+     <a href="{% url 'suprimer_etudiant' %}">Supprimer</a>
 </div>
 
 {% empty %}
