@@ -1,0 +1,60 @@
+{% extends "scolarite/admin/base.html" %}
+
+
+{% block content %}
+
+<form method="post">
+    
+    {% csrf_token %}
+    {% for message in messages  %}
+      {{message}}
+    {% endfor %}
+    <div>
+        <label for="nom">Nom :</label>
+        <input type="text" id="nom" name="nom" required>
+    </div>
+
+    <div>
+        <label for="prenom">Prénom :</label>
+        <input type="text" id="prenom" name="prenom" required>
+    </div>
+
+    <div>
+        <label for="age">Âge :</label>
+        <input type="number" id="age" name="age" required>
+    </div>
+
+    <div>
+        <label for="classe_id"> Classe :</label>
+        <select id="classe_id" name="classe_id" required>
+            <option value="">-- Choisir une classe --</option>
+
+            {% for classe in classes %}
+                <option value="{{ classe.id }}">
+                    {{ classe.nom_classe }}
+                </option>
+            {% endfor %}
+
+        </select>
+    </div>
+    <div>
+        <label for="matiere_id"> Classe :</label>
+        <select id="matiere_id" name="matiere_id" required>
+            <option value="">-- Choisir une classe --</option>
+
+            {% for matiere in matieres %}
+                <option value="{{ matiere.id }}">
+                    {{ matiere.nom_matiere }}
+                </option>
+            {% endfor %}
+
+        </select>
+    </div>
+
+    <button type="submit">
+        Ajouter
+    </button>
+
+</form>
+
+{% endblock content %}

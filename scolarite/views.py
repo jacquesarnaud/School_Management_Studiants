@@ -116,16 +116,16 @@ def ajouter_etudiant(request):
 def suprimer_etudiant(request , pk):
     etudiant = get_object_or_404(Etudiant,pk=pk)
     if request.method == 'POST':
-        etudiant.delete('liste_etu')
-        redirect('liste_etu')
-
-    return render(request, "comptes/etudiant/supprimer.html", {
+        etudiant.delete()
+        return redirect('liste_etu')
+ 
+    return render(request, "scolarite/admin/supprimer.html", {
         "etudiant": etudiant
     })
 
-def detail_etudiant(request , pk=id):
+def detail_etudiant(request , pk):
     etudiant = get_object_or_404(Etudiant,pk=pk)
-    return render(request, "comptes/etudiant/detail.html", {
+    return render(request, "scolarite/admin/detail.html", {
             "etudiant": etudiant
         })
 
@@ -135,14 +135,17 @@ def ajouter_professeur(request):
     if request.method == 'POST':
         nom       = request.POST['nom']
         prenom    = request.POST['prenom']
-        age       = request.POST['age']
+        age       = int(request.POST['age']) 
         classe_id = request.POST['classe_id']
         matiere_id= request.POST['matiere_id']
 
+        classe = get_object_or_404(Classe, id=classe_id)
+        matiere = get_object_or_404(Matiere, id=matiere_id)
+
+
         email        = generer_email(nom, prenom, 'professeur')
         mot_de_passe = generer_mot_de_passe()
-        if len(nom) == 3 and len(prenom) == 3 and 5 < age < 70:
-            # Créer le compte utilisateur
+        if len(nom) >= 3 and len(prenom) >= 3 and 5 < age < 70:
             user = Professeur.objects.create_user(
                 username   = email,
                 email      = email,
@@ -165,7 +168,33 @@ def ajouter_professeur(request):
             })
 
     classes = Classe.objects.all()
-    return render(request, 'scolarite/admin/ajouter_prof.html', {'classes': classes})
+    matieres = Matiere.objects.all()
+    return render(request, 'scolarite/admin/ajouter_prof.html', {'classes': classes, 'matieres':matieres})
+
+def suprimer_professeur(request , pk):
+    professeur = get_object_or_404(Professeur,pk=pk)
+    if request.method == 'POST':
+        professeur.delete('liste_etu')
+        redirect('')
+
+    return render(request, "scolarite/admin/supprimer_prof.html", {
+        "professeur": professeur
+    })
+
+def detail_professeur(request , pk):
+    professeur = get_object_or_404(Professeur,pk=pk)
+    return render(request, "scolarite/admin/detail_prof.html", {
+            "professeur": professeur
+        })
+
+def list_professeur(request):
+    professeurs = Professeur.objects.all()
+
+    context = {
+        "professeurs": professeurs
+    }
+
+    return render(request, "scolarite/admin/liste_prof_registe.html", context)
 
 # ── Professeur ───────────────────────────────────────────────────────────────
 

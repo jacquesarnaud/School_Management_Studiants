@@ -1,32 +1,32 @@
 {% extends "scolarite/admin/base.html" %}
 
 {% block content %}
-<h1>les listes des etudiants inscrits</h1>
+<h1>les listes des professeur enregistrer</h1>
 
-<form style="margin: 10px;display: flex; justify-content:right;" action="{% url 'ajouter_etudiant' %}" method="get">
-    <button  type="submit">Ajouter un étudiant</button>
+<form style="margin: 10px;display: flex; justify-content:right;" action="{% url 'ajouter_professeur' %}" method="get">
+    <button  type="submit">Ajouter un professeur</button>
 </form>
 
 <hr>
 
-{% for etudiant in etudiants %}
+{% for professeur in professeurs %}
 
 <div style="display: flex; justify-content: space-between; margin: 20px;">
     <div style="display: flex; justify-content:center;gap: 20px;">
-       <p>{{ etudiant.nom }}</p>
-       <p>{{ etudiant.prenom }}</p>
-       <p>{{ etudiant.matricule }}</p>
-       <p>{{ etudiant.classe }}</p> 
+       <p>{{ professeur.nom }}</p>
+       <p>{{ professeur.prenom }}</p>
+       <p>{{ professeur.matiere }}</p>
+       <p>{{ professeur.classe }}</p> 
     </div>
     
     <div style="display: flex; gap: 10px;">
-        <form action="{% url 'detail_etudiant' etudiant.id %}" method="get">
+        <form action="{% url 'detail_professeur' professeur.id %}" method="get">
             <button style="background-color: blue ;" type="submit">Détail</button>
         </form>
         <form action="" method="get">
             <button style="background-color: green" type="submit">Modifier</button>
         </form>
-        <form action="{% url 'suprimer_etudiant' etudiant.id %}" method="get">
+        <form action="{% url 'suprimer_professeur' professeur.id %}" method="get">
             <button style="background-color: red;" type="submit">suprimer</button>
         </form>
     </div>

@@ -1,0 +1,23 @@
+{% extends "scolarite/admin/base.html" %}
+
+
+{% block content %}
+
+<h2>Suppression d'un étudiant</h2>
+
+<p>
+    Voulez-vous vraiment supprimer
+    <strong>{{ etudiant.matricule }} {{ etudiant.nom }} {{ etudiant.prenom }}  </strong> ?
+</p>
+
+<form   method="POST">
+    {% csrf_token %}
+    
+<button type="submit">
+ Oui, supprimer
+</button>    
+</form>
+<a href="{% url 'liste_etu' %}">Annuler</a> 
+
+
+{% endblock content %}
