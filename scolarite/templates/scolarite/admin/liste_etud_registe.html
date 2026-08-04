@@ -9,7 +9,6 @@
 
 <hr>
 
-{% for etudiant in etudiants %}
 
 <div style="display: flex; justify-content: space-between; margin: 20px;">
     <div style="display: flex; justify-content:center;gap: 20px;">
@@ -21,7 +20,10 @@
                 <td>Classe</td>
                 <td>Action</td>
             </thead>
+            {% for etudiant in etudiants %}
+
             <tbody>
+
                 <th><p>{{ etudiant.nom }}</p></th>
                 <th><p>{{ etudiant.prenom }}</p></th>
                 <th><p>{{ etudiant.matricule }}</p></th>
@@ -39,8 +41,13 @@
                         </form>
                     </div>
                 </th>
+
             </tbody>
-          
+            {% empty %}
+
+            <p>Aucun étudiant enregistré.</p>
+
+            {% endfor %}  
         </table>
     </div>
     
@@ -48,10 +55,6 @@
 
 </div>
 
-{% empty %}
 
-<p>Aucun étudiant enregistré.</p>
-
-{% endfor %}
 
 {% endblock %}
