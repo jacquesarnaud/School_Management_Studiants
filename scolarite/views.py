@@ -222,7 +222,7 @@ def suprimer_professeur(request , pk):
     professeur = get_object_or_404(Professeur,pk=pk)
     if request.method == 'POST':
         professeur.id_user.delete()
-        redirect('liste_etu')
+        return redirect('liste_prof')
 
     return render(request, "scolarite/admin/supprimer_prof.html", {
         "professeur": professeur
