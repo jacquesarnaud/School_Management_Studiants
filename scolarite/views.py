@@ -9,6 +9,10 @@ from comptes.models import Utilisateur
 from django.contrib import messages
 from functools import wraps
 from django.core.exceptions import PermissionDenied
+from .forms import *
+from django.db import transaction
+from .forms import*
+from django.db.models import Avg
 
 # ── Admin ────────────────────────────────────────────────────────────────────
 
@@ -20,9 +24,7 @@ def role_requis(role):
             if getattr(request.user, "role", None) != role:
                 raise PermissionDenied("Vous n'avez pas l'autorisation d'accéder à cette page.")
             return vue(request, *args, **kwargs)
-
         return wrapper
-
     return decorateur
 
 @role_requis('admin')
@@ -45,6 +47,7 @@ def afficher_utilisateur(request):
 def identifiant(request):   
     render (request,'scolarite/admin/identidiants.html',)
 
+@role_requis('admin')
 def list_etudiant(request):
     etudiants = Etudiant.objects.all()
 
@@ -56,63 +59,78 @@ def list_etudiant(request):
 
 @role_requis('admin')
 def ajouter_etudiant(request):
-    classes = Classe.objects.all()
 
     if request.method == "POST":
-        nom = request.POST["nom"]
-        prenom = request.POST["prenom"]
-        age = int(request.POST["age"])
-        classe_id = request.POST["classe_id"]
-        classe = get_object_or_404(Classe, id=classe_id)
+        form = Etudiantforms(request.POST)
+        if form.is_valid():
 
-        matricule = generer_matricule(nom, prenom)
-        email = generer_email(nom, prenom, "etudiant")
-        mot_de_passe = generer_mot_de_passe()
+            nom = form.cleaned_data["nom"]
+            prenom = form.cleaned_data["prenom"]
+            age = int(form.cleaned_data["age"])
+            classe_id = form.cleaned_data["classe"]
 
-        if len(nom) >= 3 and len(prenom) >= 3 and 5 < age < 70:
+            matricule = generer_matricule(nom, prenom)
+            email = generer_email(nom, prenom, "etudiant")
+            mot_de_passe = generer_mot_de_passe()
 
-            user = Utilisateur.objects.create_user(
-                username=email,
-                email=email,
-                password=mot_de_passe,
-                first_name=nom,
-                last_name=prenom,
-                role="etudiant",
-            )
+        
+            try:
 
-            Etudiant.objects.create(
-                matricule=matricule,
-                nom=nom,
-                prenom=prenom,
-                age=age,
-                classe=classe,
-                id_user=user,
-            )
+                with transaction.atomic():
 
-            messages.success(
-                request,
-                f"L'étudiant {nom} {prenom} a été enregistré."
-            )
-            return render(request, "scolarite/admin/identifiants.html", {
-                                "nom": nom,
-                                "prenom": prenom,
-                                "email": email,
-                                "mot_de_passe": mot_de_passe,
-                                "matricule": matricule,
-                                "role": "etudiant",
-                            })
+                    user = Utilisateur.objects.create_user(
+                        username=email,
+                        email=email,
+                        password=mot_de_passe,
+                        first_name=nom,
+                        last_name=prenom,
+                        role="etudiant",
+                    )
 
-        messages.error(
-            request,
-            "Le nom et le prénom doivent contenir au moins 3 caractères et l'âge doit être compris entre 6 et 69 ans."
-        )
+                    Etudiant.objects.create(
+                        matricule=matricule,
+                        nom=nom,
+                        prenom=prenom,
+                        age=age,
+                        classe=classe_id,
+                        id_user=user,
+                    )
+
+                messages.success(
+                    request,
+                    f"L'étudiant {nom} {prenom} a été enregistré."
+                )
+
+                return render(
+                    request,
+                    "scolarite/admin/identifiants.html",
+                    {
+                        "nom": nom,
+                        "prenom": prenom,
+                        "email": email,
+                        "mot_de_passe": mot_de_passe,
+                        "matricule": matricule,
+                        "role": "etudiant",
+                    }
+                )
+            except Exception as e:
+
+                messages.error(
+                    request,
+                    "Une erreur est survenue pendant l'enregistrement."
+                )
+
+    else:
+        form = Etudiantforms()
+
 
     return render(
         request,
         "scolarite/admin/ajouter_etudiant.html",
-        {"classes": classes},
+        {"form": form},
     )
 
+@role_requis('admin')
 def suprimer_etudiant(request , pk):
     etudiant = get_object_or_404(Etudiant,pk=pk)
     if request.method == 'POST':
@@ -123,54 +141,83 @@ def suprimer_etudiant(request , pk):
         "etudiant": etudiant
     })
 
+@role_requis('admin')
 def detail_etudiant(request , pk):
     etudiant = get_object_or_404(Etudiant,pk=pk)
     return render(request, "scolarite/admin/detail.html", {
             "etudiant": etudiant
         })
 
+def modifier_etudiant(request, pk):
+    etudiant = get_object_or_404(Etudiant, pk=pk)
+
+    if request.method == "POST":
+        form = Etudiantforms(request.POST, instance=etudiant)
+
+        if form.is_valid():
+            form.save()
+            return redirect("liste_etu")
+            messages.success(request,'modification effectuer')
+    else:
+        form = Etudiantforms(instance=etudiant)
+        messages.error(request,'error modification pas pris en compte')
+
+    return render(request, "scolarite/admin/update.html", {
+        "form": form
+    })
 
 @role_requis('admin')
 def ajouter_professeur(request):
+    form = Professeurforms() 
     if request.method == 'POST':
-        nom       = request.POST['nom']
-        prenom    = request.POST['prenom']
-        age       = int(request.POST['age']) 
-        classe_id = request.POST['classe_id']
-        matiere_id= request.POST['matiere_id']
+        form = Professeurforms(request.POST)
+        if form.is_valid():
 
-        classe = get_object_or_404(Classe, id=classe_id)
-        matiere = get_object_or_404(Matiere, id=matiere_id)
+            nom       = form.cleaned_data['nom']
+            prenom    = form.cleaned_data['prenom']
+            age       = int(form.cleaned_data['age']) 
+            classe    = form.cleaned_data['classe']
+            matiere   = form.cleaned_data['matiere']
 
+            
 
-        email        = generer_email(nom, prenom, 'professeur')
-        mot_de_passe = generer_mot_de_passe()
-        if len(nom) >= 3 and len(prenom) >= 3 and 5 < age < 70:
-            user = Professeur.objects.create_user(
-                username   = email,
-                email      = email,
-                password   = mot_de_passe,
-                first_name = nom,
-                last_name  = prenom,
-                role       = 'professeur'
-            )
-            Professeur.objects.create(
-                nom       = nom,
-                prenom    = prenom,
-                age       =age,
-                matiere   = classe_id,
-                classe    = matiere_id,
-                id_user   = user
-            )
-            redirect(request, 'scolarite/admin/identifiants.html', {
-                'email':        email,
-                'mot_de_passe': mot_de_passe
-            })
+            email        = generer_email(nom, prenom, 'professeur')
+            mot_de_passe = generer_mot_de_passe()
+            
+            try:
+                with transaction.atomic():
+                    user = Utilisateur.objects.create_user(
+                        username   = email,
+                        email      = email,
+                        password   = mot_de_passe,
+                        first_name = nom,
+                        last_name  = prenom,
+                        role       = 'professeur'
+                    )
+                    Professeur.objects.create(
+                        nom       = nom,
+                        prenom    = prenom,
+                        age       = age,
+                        matiere   = matiere,
+                        classe    = classe,
+                        id_user   = user
+                    )
+                    messages.success(
+                    request,
+                    f"le Professeur {nom} {prenom} a été enregistré."
+                    )
+                    return render(request, 'scolarite/admin/identifiants.html', {
+                        'email':        email,
+                        'mot_de_passe': mot_de_passe
+                    })
+            except Exception:   
+                messages.error(request,"Une erreur est survenue pendant l'enregistrement.")
+    else:
+        form = Professeurforms() 
 
-    classes = Classe.objects.all()
-    matieres = Matiere.objects.all()
-    return render(request, 'scolarite/admin/ajouter_prof.html', {'classes': classes, 'matieres':matieres})
+    return render(request, 'scolarite/admin/ajouter_prof.html', { 'form' : form })
 
+@role_requis('admin')
 def suprimer_professeur(request , pk):
     professeur = get_object_or_404(Professeur,pk=pk)
     if request.method == 'POST':
@@ -181,12 +228,14 @@ def suprimer_professeur(request , pk):
         "professeur": professeur
     })
 
+@role_requis('admin')
 def detail_professeur(request , pk):
     professeur = get_object_or_404(Professeur,pk=pk)
     return render(request, "scolarite/admin/detail_prof.html", {
             "professeur": professeur
         })
 
+@role_requis('admin')
 def list_professeur(request):
     professeurs = Professeur.objects.all()
 
@@ -196,37 +245,65 @@ def list_professeur(request):
 
     return render(request, "scolarite/admin/liste_prof_registe.html", context)
 
+def modifier_professeur(request, pk):
+    professeur = get_object_or_404(Professeur, pk=pk)
+
+    if request.method == "POST":
+        form = Professeurforms(request.POST, instance=professeur)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request,'modification effectuer')
+            return redirect("liste_prof")
+        messages.error(request,'error modification pas pris en compte')
+
+    form = Professeurforms(instance=professeur)
+
+    return render(request, "scolarite/admin/update_prof.html", {
+        "form": form
+    })
+
 # ── Professeur ───────────────────────────────────────────────────────────────
 
-@role_requis('professeur')
 def prof_dashboard(request):
-    professeur = request.user.professeur
-    etudiants  = Etudiant.objects.filter(classe=professeur.classe)
-    return render(request, 'professeur/dashboard.html', {
+    professeur = Professeur.objects.all()
+    return render(request, 'scolarite/professeur/accueille_professeur.html', {
         'professeur': professeur,
-        'etudiants':  etudiants
     })
 
 
 @role_requis('professeur')
-def ajouter_note(request):
+def ajouter_note(request,pk):
     professeur = request.user.professeur
-    etudiants  = Etudiant.objects.filter(classe=professeur.classe)
-    matieres   = Matiere.objects.all()
+    etudiant = get_object_or_404( Etudiant,pk=pk)  
+    matieres = professeur.matiere
 
     if request.method == 'POST':
-        Note.objects.update_or_create(
-            etudiant_id = request.POST['etudiant_id'],
-            matiere_id  = request.POST['matiere_id'],
-            defaults    = {'note': request.POST['note']}
-        )
+        Note.objects.create(
+            etudiant = etudiant,
+            matiere=matieres,
+            note=request.POST['note']  )      
         return redirect('prof_dashboard')
 
-    return render(request, 'professeur/ajouter_note.html', {
-        'etudiants': etudiants,
+    return render(request, 'scolarite/professeur/ajouter_note.html', {
+        'etudiant': etudiant,
         'matieres':  matieres
     })
 
+def mes_etudiant(request):
+    professeur = request.user.professeur
+    etudiants = Etudiant.objects.filter(classe = professeur.classe)  
+    if etudiants:
+        for etu in etudiants:
+            etu.notes = Note.objects.filter(
+            etudiant=etu.id).select_related('matiere')
+
+            etu.moyenne = Note.objects.filter(
+                etudiant=etu
+            ).aggregate(
+                moyenne=Avg('note')
+            )['moyenne']    
+    return render(request,'scolarite/professeur/mes_etudiant.html', {'etudiants':etudiants})
 
 # ── Étudiant ─────────────────────────────────────────────────────────────────
 @role_requis('etudiant')

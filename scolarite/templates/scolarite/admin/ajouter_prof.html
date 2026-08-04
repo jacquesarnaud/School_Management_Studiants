@@ -9,7 +9,16 @@
     {% for message in messages  %}
       {{message}}
     {% endfor %}
-    <div>
+
+    {{ form.as_p }}
+    
+    <button type="submit">
+        Ajouter
+    </button>
+
+</form>
+
+    {% comment %} <div>
         <label for="nom">Nom :</label>
         <input type="text" id="nom" name="nom" required>
     </div>
@@ -49,12 +58,8 @@
             {% endfor %}
 
         </select>
-    </div>
+    </div> {% endcomment %}
 
-    <button type="submit">
-        Ajouter
-    </button>
-
-</form>
+  
 
 {% endblock content %}

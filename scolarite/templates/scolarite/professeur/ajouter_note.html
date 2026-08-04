@@ -1,0 +1,29 @@
+{% extends "scolarite/professeur/base.html" %}
+
+{% block content %}
+
+<h2>Ajouter une note à {{ etudiant.nom }} {{ etudiant.prenom }}</h2>
+
+
+<form method="POST">
+
+{% csrf_token %}
+
+<label>Note</label>
+
+<input 
+    type="number"
+    name="note"
+    min="0"
+    max="20"
+>
+
+
+<button type="submit">
+    Enregistrer
+</button>
+
+</form>
+
+    
+{% endblock content %}

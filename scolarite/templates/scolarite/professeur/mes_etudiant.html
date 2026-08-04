@@ -1,0 +1,77 @@
+{% extends "scolarite/professeur/base.html" %}
+
+{% block content %}
+
+<h1>Mes etudiants</h1>
+
+<table style="    border-collapse: separate; border-spacing: 20px 10px; width:90%;">
+
+<thead>
+    <tr>
+        <th>Matricule</th>
+        <th>Nom</th>
+        <th>Prénom</th>
+        <th>Notes</th>
+        <th>Moyenne</th>
+        <th>Action</th>
+    </tr>
+</thead>
+
+
+<tbody>
+
+{% for etudiant in etudiants %}
+
+<tr>
+
+    <td>
+        {{ etudiant.matricule }}
+    </td>
+
+    <td>
+        {{ etudiant.nom }}
+    </td>
+
+    <td>
+        {{ etudiant.prenom }}
+    </td>
+
+
+    <td >
+        {% for note in etudiant.notes %}
+        
+            {{ note.note }} |
+
+        {% empty %}
+
+            Aucune note
+
+        {% endfor %}
+    </td>
+
+
+    <td>
+        {% if etudiant.moyenne %}
+            {{ etudiant.moyenne|floatformat:2 }}/20
+        {% else %}
+            Aucune note
+        {% endif %}
+    </td>
+
+
+    <td>
+        <a href="{% url 'ajouter_note' etudiant.id %}">
+            Ajouter une note
+        </a>
+    </td>
+
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+{% endblock content %}

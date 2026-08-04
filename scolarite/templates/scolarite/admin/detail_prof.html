@@ -3,14 +3,14 @@
 
 {% block content %}
 
-<h2>Détail de l'étudiant</h2>
+<h2>Détail du professeur</h2>
 
-<p>Matricule : {{ etudiant.matricule }}</p>
-<p>Nom : {{ etudiant.nom }}</p>
-<p>Âge : {{ etudiant.age }}</p>
-<p>Classe : {{ etudiant.classe }}</p>
+<p>Nom : {{ professeur.nom }}</p>
+<p>Prenom : {{ professeur.prenom }}</p>
+<p>Âge : {{ professeur.age }}</p>
+<p>Classe : {{ professeur.classe }}</p>
 
-<form action="{% url 'liste_etu'  %}" method="get">
+<form action="{% url 'liste_prof'  %}" method="get">
     <button type="submit">Retour</button>
 </form>
 

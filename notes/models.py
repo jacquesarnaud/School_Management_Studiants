@@ -5,7 +5,7 @@ from scolarite.models import Etudiant, Matiere
 class Note(models.Model):
     etudiant  = models.ForeignKey(Etudiant, on_delete=models.CASCADE)
     matiere   = models.ForeignKey(Matiere,  on_delete=models.CASCADE)
-    note      = models.FloatField()
+    note      = models.FloatField(default=0.0)
     date     = models.DateField(auto_now_add=True)
 
 

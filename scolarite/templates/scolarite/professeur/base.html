@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Etudiants Dashboard</title>
+    <title>Professeur Dashboard</title>
     <link rel="stylesheet" href="{% static 'scolarite/etudiants/styles.css' %}">
 </head>
 <body>
@@ -12,12 +12,12 @@
 <div class="container" >
 
     <nav class="nav_bar" style="flex-direction: row; display: block; ;">
-        <h2>Etudiant</h2>
+        <h2>Professeur</h2>
 
         <ul>
-            <li><a href="{% url 'etudiant_dashboard' %}">Accueil</a></li>
-            <li><a href="{% url 'mes_notes' %}">Mes notes</a></li>
-            <li><a href="{% url 'mes_absences' %}">Mes absences</a></li>
+            <li><a href="{% url 'prof_dashboard' %}">Accueil</a></li>
+            <li><a href="{% url 'mes_etudiant' %}">Mes etudiant</a></li> 
+            <li><a href="{% comment %}{% url 'mes_absences' %}{% endcomment %}">Absences</a></li>
                        
         </ul>
         <form action="{% url 'Deconnexion' %}">

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView, CreateView,FormView
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login,logout
 from .forme import ConnexionForm
 
 
@@ -31,11 +31,11 @@ class Connecter(FormView):
         if user.role == "admin":
             return redirect("admin_dashboard")
         elif user.role == "professeur":
-            return redirect("")
+            return redirect("prof_dashboard")
         elif user.role == "etudiant":
             return redirect("etudiant_dashboard")
 
         return redirect("index")
 
 def Deconnection(request):
-    redirect('connexion')
+    logout(request)

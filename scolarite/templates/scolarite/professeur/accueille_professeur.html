@@ -1,0 +1,36 @@
+{% extends "scolarite/professeur/base.html" %}
+
+{% block content %}
+
+<div class="dashboard">
+
+    <h1>Bienvenue, cher Professeur  👋</h1>
+    <p>Tableau de bord du Professeur.</p>
+
+    <div class="cards">
+    {% for n in professeur %}
+        <div class="card">
+            
+                <h3>Mes Classes : {{ n.classe }}</h3>
+         
+        </div>
+
+        <div class="card">
+
+            <h3>Matières : {{ n.matiere }}</h3>
+        </div>
+    {% endfor %}
+    </div>
+
+    <div class="section">
+        <h2>Actions rapides</h2>
+
+        <a href="" class="btn">mes etudiants</a>
+        <a href="" class="btn">Gerer les absences</a>
+
+    </div>
+
+</div>
+
+    
+{% endblock content %}

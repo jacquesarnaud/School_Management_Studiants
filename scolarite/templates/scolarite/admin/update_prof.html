@@ -1,0 +1,20 @@
+{% extends "scolarite/admin/base.html" %}
+
+
+{% block content %}
+
+<form method="post">
+
+    {% csrf_token %}
+    {% for message in messages  %}
+      {{message}}
+    {% endfor %}
+
+    {{ form.as_p }}
+    <button type="submit">
+        Modifier
+    </button>
+
+</form>
+
+{% endblock  %} 
