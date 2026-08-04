@@ -134,7 +134,7 @@ def ajouter_etudiant(request):
 def suprimer_etudiant(request , pk):
     etudiant = get_object_or_404(Etudiant,pk=pk)
     if request.method == 'POST':
-        etudiant.delete()
+        etudiant.id_user.delete()
         return redirect('liste_etu')
  
     return render(request, "scolarite/admin/supprimer.html", {
@@ -221,8 +221,8 @@ def ajouter_professeur(request):
 def suprimer_professeur(request , pk):
     professeur = get_object_or_404(Professeur,pk=pk)
     if request.method == 'POST':
-        professeur.delete('liste_etu')
-        redirect('')
+        professeur.id_user.delete()
+        redirect('liste_etu')
 
     return render(request, "scolarite/admin/supprimer_prof.html", {
         "professeur": professeur
