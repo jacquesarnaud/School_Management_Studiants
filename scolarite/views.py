@@ -222,7 +222,7 @@ def suprimer_professeur(request , pk):
     professeur = get_object_or_404(Professeur,pk=pk)
     if request.method == 'POST':
         professeur.id_user.delete()
-        return redirect('liste_prof')
+        return redirect('liste_prof')                                                                                      
 
     return render(request, "scolarite/admin/supprimer_prof.html", {
         "professeur": professeur
@@ -266,7 +266,8 @@ def modifier_professeur(request, pk):
 # ── Professeur ───────────────────────────────────────────────────────────────
 
 def prof_dashboard(request):
-    professeur = Professeur.objects.all()
+    prof = request.user.professeur
+    professeur = Professeur.objects.filter(classe =prof.classe, matiere=prof.matiere)
     return render(request, 'scolarite/professeur/accueille_professeur.html', {
         'professeur': professeur,
     })
@@ -283,7 +284,7 @@ def ajouter_note(request,pk):
             etudiant = etudiant,
             matiere=matieres,
             note=request.POST['note']  )      
-        return redirect('prof_dashboard')
+        return redirect('mes_etudiant')
 
     return render(request, 'scolarite/professeur/ajouter_note.html', {
         'etudiant': etudiant,
@@ -292,19 +293,32 @@ def ajouter_note(request,pk):
 
 def mes_etudiant(request):
     professeur = request.user.professeur
-    etudiants = Etudiant.objects.filter(classe = professeur.classe)  
-    if etudiants:
-        for etu in etudiants:
-            etu.notes = Note.objects.filter(
-            etudiant=etu.id).select_related('matiere')
 
-            etu.moyenne = Note.objects.filter(
-                etudiant=etu
-            ).aggregate(
-                moyenne=Avg('note')
-            )['moyenne']    
-    return render(request,'scolarite/professeur/mes_etudiant.html', {'etudiants':etudiants})
+    etudiants = Etudiant.objects.filter(
+        classe=professeur.classe
+    )
+    print(etudiants)
 
+    for etu in etudiants:
+        etu.notes = Note.objects.filter(
+            etudiant=etu,
+            matiere=professeur.matiere
+        ).select_related('matiere')
+
+        etu.moyenne = Note.objects.filter(
+            etudiant=etu,
+            matiere=professeur.matiere
+        ).aggregate(
+            moyenne=Avg('note')
+        )['moyenne']
+
+    return render(
+        request,
+        'scolarite/professeur/mes_etudiant.html',
+        {
+            'etudiants': etudiants
+        }
+    )
 # ── Étudiant ─────────────────────────────────────────────────────────────────
 @role_requis('etudiant')
 def etu_dashboard(request):

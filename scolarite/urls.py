@@ -23,6 +23,7 @@ urlpatterns = [
     path('mes_absences',mes_absences,name='mes_absences'),
 
 
+
     path('prof_dashboard',prof_dashboard,name='prof_dashboard'),
     path('ajouter-note/<int:pk>',ajouter_note,name='ajouter_note'),
     path('mes_etudiant',mes_etudiant,name='mes_etudiant'),
